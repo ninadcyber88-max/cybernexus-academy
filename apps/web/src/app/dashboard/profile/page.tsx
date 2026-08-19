@@ -13,7 +13,7 @@ export default function ProfilePage() {
   const [aadhaar, setAadhaar] = useState("");
   const [pan, setPan] = useState("");
   
-  return (const [mobile, setMobile] = useState("");
+  return (
 
     <main className="min-h-screen bg-black text-white md:pl-72">
 
