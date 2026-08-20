@@ -1,0 +1,27 @@
+{
+  "name": "CyberNexus Academy",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+
+  "forwardPorts": [
+    3000,
+    3002,
+    5555
+  ],
+
+  "portsAttributes": {
+    "3000": {
+      "label": "Web App",
+      "onAutoForward": "notify"
+    },
+    "3002": {
+      "label": "NestJS API",
+      "onAutoForward": "notify"
+    },
+    "5555": {
+      "label": "Prisma Studio",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "remoteUser": "node"
+}
