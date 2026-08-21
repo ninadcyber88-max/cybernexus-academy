@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 const modules = [
@@ -72,12 +73,12 @@ export default function EthicalHackingPage() {
 
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
-          <a
+          <Link
             href="/"
             className="font-bold tracking-[0.2em] text-cyan-400"
           >
             CYBERNEXUS
-          </a>
+          </Link>
 
           <span className="rounded-full border border-cyan-400/30 px-4 py-2 text-xs tracking-widest text-cyan-300">
             ETHICAL HACKING
@@ -95,7 +96,7 @@ export default function EthicalHackingPage() {
         <div className="relative mx-auto max-w-7xl px-6 py-24">
 
           <p className="font-mono text-sm tracking-[0.4em] text-cyan-400">
-            // AUTHORIZED SECURITY TESTING
+            {"// AUTHORIZED SECURITY TESTING"}
           </p>
 
           <div className="mt-6 flex items-center gap-5">

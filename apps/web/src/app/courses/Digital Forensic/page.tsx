@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { useState } from "react";
 
@@ -71,12 +72,12 @@ export default function DigitalForensicsPage() {
       <header className="sticky top-0 z-50 border-b border-cyan-400/20 bg-black/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
-          <a
+          <Link
             href="/"
-            className="font-bold tracking-[0.2em] text-cyan-400"
-          >
-            CYBERNEXUS
-          </a>
+              className="font-bold tracking-[0.2em] text-cyan-400"
+              >
+                CYBERNEXUS
+                </Link>
 
           <span className="rounded-full border border-cyan-400/30 px-4 py-2 text-xs tracking-widest text-cyan-300">
             DIGITAL FORENSICS
@@ -93,7 +94,7 @@ export default function DigitalForensicsPage() {
         <div className="relative mx-auto max-w-7xl px-6 py-24">
 
           <p className="font-mono text-sm tracking-[0.4em] text-cyan-400">
-            // DIGITAL FORENSICS PROGRAM
+            {'// DIGITAL FORENSICS PROGRAM'}
           </p>
 
           <div className="mt-6 flex items-center gap-5">
