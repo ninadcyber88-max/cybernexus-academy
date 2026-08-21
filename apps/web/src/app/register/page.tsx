@@ -1,270 +1,198 @@
-"use client";
+'use client';
 
-import { FormEvent, useState } from "react";
-import Link from "next/link";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Terminal, Mail, Lock, User, ArrowRight, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
+import { MatrixBackground } from '@/components/MatrixBackground';
+import { useMatrix } from '@/hooks/useMatrix';
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { isEnabled, toggleMatrix } = useMatrix();
+
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setIsLoading(true);
+    setError(null);
 
-    const form = new FormData(e.currentTarget);
-
-    const password = String(form.get("password") || "");
-    const confirmPassword = String(form.get("confirmPassword") || "");
-    const terms = form.get("terms");
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+    if (formData.password !== formData.confirmPassword) {
+      setIsLoading(false);
+      setError('Passwords do not match.');
       return;
     }
 
-    if (password.length < 8) {
-      setError("Password must contain at least 8 characters.");
+    if (formData.password.length < 8) {
+      setIsLoading(false);
+      setError('Access Key must be at least 8 characters long.');
       return;
     }
 
-    if (!terms) {
-      setError("Please accept the Terms & Conditions.");
-      return;
-    }
-
-    alert("Registration form validated successfully.");
-  }
+    setTimeout(() => {
+      setIsLoading(false);
+      router.push('/dashboard');
+    }, 1200);
+  };
 
   return (
-    <main className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* Cyber Grid */}
-      <div className="absolute inset-0 opacity-30 pointer-events-none bg-[linear-gradient(rgba(0,212,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(0,212,255,0.08)_1px,transparent_1px)] bg-[size:54px_54px]" />
+    <main className="relative min-h-screen bg-black text-white selection:bg-emerald-500 selection:text-black flex flex-col justify-between">
+      <MatrixBackground isEnabled={isEnabled} />
+      <Navbar isMatrixEnabled={isEnabled} onToggleMatrix={toggleMatrix} />
 
-      {/* Glow */}
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-cyan-500/10 blur-[140px] rounded-full" />
-
-      <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
-        <div className="w-full max-w-2xl">
-
-          {/* Brand */}
+      <section className="relative z-10 w-full max-w-lg mx-auto px-6 py-12">
+        <div className="p-8 rounded-2xl border border-zinc-800 bg-zinc-950/80 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
           <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-black tracking-[0.25em] text-cyan-400">
-              CYBERNEXUS
+            <div className="inline-flex p-3 rounded-xl bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 mb-4 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+              <Terminal className="w-8 h-8" />
+            </div>
+            <h1 className="text-2xl font-bold font-mono tracking-tight text-zinc-100">
+              CREATE <span className="text-emerald-400">CLEARANCE</span>
             </h1>
-
-            <p className="mt-1 text-xs tracking-[0.55em] text-gray-500">
-              ACADEMY
-            </p>
-
-            <p className="mt-6 text-xs tracking-[0.35em] text-cyan-500">
-              // CREATE STUDENT ACCOUNT
+            <p className="text-xs font-mono text-zinc-500 mt-1">
+              Join CyberNexus Academy to deploy live security labs
             </p>
           </div>
 
-          {/* Card */}
-          <div className="rounded-2xl border border-cyan-500/20 bg-[#07090b]/95 p-6 md:p-9 shadow-[0_0_60px_rgba(0,212,255,0.08)]">
+          {error && (
+            <div className="mb-6 p-3 rounded-lg bg-red-950/40 border border-red-500/40 text-red-400 text-xs font-mono">
+              [!] {error}
+            </div>
+          )}
 
-            <h2 className="text-3xl font-bold">
-              Create Account
-            </h2>
-
-            <p className="mt-2 text-gray-500">
-              Register to start your cybersecurity learning journey.
-            </p>
-
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-
-              {/* Full Name */}
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-300">
-                  FULL NAME
-                </label>
-
-                <input
-                  name="fullName"
-                  type="text"
-                  required
-                  placeholder="Your full name"
-                  className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-white outline-none transition focus:border-cyan-400"
-                />
-              </div>
-
-              {/* Email + Mobile */}
-              <div className="grid gap-5 md:grid-cols-2">
-
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-gray-300">
-                    EMAIL ADDRESS
-                  </label>
-
-                  <input
-                    name="email"
-                    type="email"
-                    required
-                    placeholder="student@example.com"
-                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-white outline-none focus:border-cyan-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-gray-300">
-                    MOBILE NUMBER
-                  </label>
-
-                  <input
-                    name="mobile"
-                    type="tel"
-                    required
-                    inputMode="numeric"
-                    maxLength={10}
-                    placeholder="10 digit mobile number"
-                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-white outline-none focus:border-cyan-400"
-                  />
-                </div>
-
-              </div>
-
-              {/* Aadhaar + PAN */}
-              <div className="grid gap-5 md:grid-cols-2">
-
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-gray-300">
-                    AADHAAR NUMBER
-                  </label>
-
-                  <input
-                    name="aadhaar"
-                    type="text"
-                    required
-                    inputMode="numeric"
-                    maxLength={12}
-                    placeholder="12 digit Aadhaar number"
-                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-white outline-none focus:border-cyan-400"
-                  />
-
-                  <p className="mt-1 text-xs text-gray-600">
-                    Use only if required for your academy workflow.
-                  </p>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-gray-300">
-                    PAN NUMBER
-                  </label>
-
-                  <input
-                    name="pan"
-                    type="text"
-                    required
-                    maxLength={10}
-                    placeholder="ABCDE1234F"
-                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 uppercase text-white outline-none focus:border-cyan-400"
-                  />
-                </div>
-
-              </div>
-
-              {/* Password */}
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-300">
-                  PASSWORD
-                </label>
-
-                <div className="relative">
-                  <input
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    required
-                    placeholder="Minimum 8 characters"
-                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 pr-20 text-white outline-none focus:border-cyan-400"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-cyan-400"
-                  >
-                    {showPassword ? "HIDE" : "SHOW"}
-                  </button>
-                </div>
-              </div>
-
-              {/* Confirm Password */}
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-300">
-                  CONFIRM PASSWORD
-                </label>
-
-                <div className="relative">
-                  <input
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    required
-                    placeholder="Repeat your password"
-                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 pr-20 text-white outline-none focus:border-cyan-400"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-cyan-400"
-                  >
-                    {showConfirmPassword ? "HIDE" : "SHOW"}
-                  </button>
-                </div>
-              </div>
-
-              {/* Terms */}
-              <label className="flex items-start gap-3 text-sm text-gray-500">
-                <input
-                  name="terms"
-                  type="checkbox"
-                  className="mt-1 accent-cyan-400"
-                />
-
-                <span>
-                  I agree to the{" "}
-                  <span className="text-cyan-400">
-                    Terms & Conditions
-                  </span>{" "}
-                  and Privacy Policy.
-                </span>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-mono text-zinc-400 uppercase tracking-wider mb-2">
+                Full Name / Handle
               </label>
-
-              {/* Error */}
-              {error && (
-                <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-                  {error}
-                </div>
-              )}
-
-              {/* Submit */}
-              <button
-                type="submit"
-                className="w-full rounded-xl bg-cyan-400 py-4 font-bold text-black transition hover:bg-cyan-300"
-              >
-                CREATE ACCOUNT →
-              </button>
-
-            </form>
-
-            {/* Login */}
-            <div className="mt-7 border-t border-white/10 pt-6 text-center text-sm text-gray-500">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="font-semibold text-cyan-400 hover:text-cyan-300"
-              >
-                Sign In
-              </Link>
+              <div className="relative">
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input
+                  type="text"
+                  name="fullName"
+                  required
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  placeholder="Ninad Pawar"
+                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-900/80 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+                />
+              </div>
             </div>
 
+            <div>
+              <label className="block text-xs font-mono text-zinc-400 uppercase tracking-wider mb-2">
+                Operator Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="cadet@cybernexus.io"
+                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-900/80 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono text-zinc-400 uppercase tracking-wider mb-2">
+                Access Key (Min 8 Chars)
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••••••"
+                  className="w-full pl-10 pr-10 py-2.5 bg-zinc-900/80 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono text-zinc-400 uppercase tracking-wider mb-2">
+                Confirm Access Key
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="••••••••••••"
+                  className="w-full pl-10 pr-4 py-2.5 bg-zinc-900/80 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+                />
+              </div>
+            </div>
+
+            <div className="pt-2 text-[11px] font-mono text-zinc-500 space-y-1">
+              <p className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                Instant access to beginner cyber defense modules
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full mt-4 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-semibold text-xs font-mono transition flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.25)]"
+            >
+              {isLoading ? (
+                <span>CREATING OPERATOR PROFILE...</span>
+              ) : (
+                <>
+                  <span>REGISTER CLEARANCE</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-8 pt-6 border-t border-zinc-900 text-center">
+            <p className="text-xs font-mono text-zinc-500">
+              Already have an active clearance?{' '}
+              <Link href="/login" className="text-emerald-400 hover:underline font-semibold">
+                Login Terminal
+              </Link>
+            </p>
           </div>
         </div>
-      </div>
+      </section>
+
+      <Footer />
     </main>
   );
 }

@@ -4,20 +4,151 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-enum UserRole {
+// ----------------------------------------------------
+// ENUMS
+// ----------------------------------------------------
+
+enum Role {
   STUDENT
   INSTRUCTOR
   ADMIN
 }
 
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum EnrollmentStatus {
+  IN_PROGRESS
+  COMPLETED
+  DROPPED
+}
+
+// ----------------------------------------------------
+// USER & IDENTITY
+// ----------------------------------------------------
+
 model User {
-  id           Int      @id @default(autoincrement())
-  name         String
-  email        String   @unique
-  passwordHash String
-  role         UserRole @default(STUDENT)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  fullName      String
+  studentHandle String         @unique // e.g. CYBER-SEC-9082
+  role          Role           @default(STUDENT)
+  clearance     String         @default("LEVEL 1 (CADET)")
+  avatarUrl     String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relations
+  enrollments   Enrollment[]
+  progress      ModuleProgress[]
+  certificates  Certificate[]
+  coursesCreated Course[]      @relation("InstructorCourses")
+
+  @@map("users")
+}
+
+// ----------------------------------------------------
+// COURSES & MODULES
+// ----------------------------------------------------
+
+model Course {
+  id           String         @id @default(cuid())
+  slug         String         @unique
+  title        String
+  badge        String         // e.g. DFIR TRACK, RED TEAM
+  description  String         @db.Text
+  level        CourseLevel    @default(BEGINNER)
+  duration     String         // e.g. "8 Weeks"
+  instructorId String
+  published    Boolean        @default(true)
+  tags         String[]
+  highlights   String[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  // Relations
+  instructor   User           @relation("InstructorCourses", fields: [instructorId], references: [id], onDelete: Cascade)
+  modules      Module[]
+  enrollments  Enrollment[]
+  certificates Certificate[]
+
+  @@map("courses")
+}
+
+model Module {
+  id          String           @id @default(cuid())
+  courseId    String
+  title       String
+  orderIndex  Int              // क्रमाने दाखवण्यासाठी (1, 2, 3...)
+  duration    String           // e.g. "45 Mins"
+  isSandbox   Boolean          @default(false) // Hands-on lab sandbox आहे की नाही
+  contentUrl  String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Relations
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress    ModuleProgress[]
+
+  @@unique([courseId, orderIndex])
+  @@map("modules")
+}
+
+// ----------------------------------------------------
+// ENROLLMENT, PROGRESS & CERTIFICATES
+// ----------------------------------------------------
+
+model Enrollment {
+  id          String           @id @default(cuid())
+  userId      String
+  courseId    String
+  status      EnrollmentStatus @default(IN_PROGRESS)
+  enrolledAt  DateTime         @default(now())
+  completedAt DateTime?
+
+  // Relations
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+model ModuleProgress {
+  id          String           @id @default(cuid())
+  userId      String
+  moduleId    String
+  isCompleted Boolean          @default(false)
+  completedAt DateTime?
+  updatedAt   DateTime         @updatedAt
+
+  // Relations
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module      Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId])
+  @@map("module_progress")
+}
+
+model Certificate {
+  id          String           @id @default(cuid())
+  code        String           @unique // e.g. CN-SEC-2026-X892
+  userId      String
+  courseId    String
+  issuedAt    DateTime         @default(now())
+  pdfUrl      String?
+
+  // Relations
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("certificates")
 }

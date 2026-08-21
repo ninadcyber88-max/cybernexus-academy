@@ -1,0 +1,45 @@
+import { StudentDashboardData } from '@/types/user';
+
+export const MOCK_STUDENT_DASHBOARD: StudentDashboardData = {
+  studentName: 'Cadet Ninad',
+  studentHandle: 'CYBER-SEC-9082',
+  clearanceLevel: 'LEVEL 2 (OPERATOR)',
+  activeLabs: 3,
+  hoursSpent: 42,
+  certificationsEarned: 1,
+  enrolledCourses: [
+    {
+      id: 'enr-01',
+      courseSlug: 'digital-forensics',
+      courseTitle: 'Digital Forensics & Incident Response',
+      badge: 'DFIR TRACK',
+      totalModules: 24,
+      completedModules: 18,
+      progressPercentage: 75,
+      lastAccessed: '2 hours ago',
+      status: 'In Progress',
+    },
+    {
+      id: 'enr-02',
+      courseSlug: 'ethical-hacking',
+      courseTitle: 'Offensive Security & Ethical Hacking',
+      badge: 'RED TEAM',
+      totalModules: 32,
+      completedModules: 8,
+      progressPercentage: 25,
+      lastAccessed: 'Yesterday',
+      status: 'In Progress',
+    },
+    {
+      id: 'enr-03',
+      courseSlug: 'soc-analyst',
+      courseTitle: 'SOC Analyst & Threat Hunting',
+      badge: 'BLUE TEAM',
+      totalModules: 18,
+      completedModules: 18,
+      progressPercentage: 100,
+      lastAccessed: '3 days ago',
+      status: 'Completed',
+    },
+  ],
+};
