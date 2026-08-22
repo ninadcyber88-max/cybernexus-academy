@@ -17,7 +17,7 @@ export default function MatrixBackground() {
     let animationFrame: number;
 
     const characters =
-      "01ABCDEFGHIJKLMNOPQRSTUVWXYZ<>/{}[]$#@%&*";
+      "NINAD01ABCDEFGHIJKLMNOPQRSTUVWXYZ<>/{}[]$#@%&*";
 
     let columns = 0;
     let drops: number[] = [];
